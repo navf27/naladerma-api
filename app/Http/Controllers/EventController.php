@@ -14,8 +14,7 @@ class EventController extends Controller
             'name' => 'required|max:255',
             'description' => 'required',
             'location' => 'required|max:45',
-            'file_link' => 'max:255',
-            'img_link' => 'required|max:255',
+            'img_link' => 'required',
             'start_time' => 'required',
             'time_ends' => 'required',
         ]);
@@ -59,14 +58,14 @@ class EventController extends Controller
         return response()->json($response);
     }
 
-    public function setOnGoing($id)
+    public function setStatus(Request $request, $id)
     {
         $event = Event::findOrFail($id);
-        $event['ongoing'] = !$event['ongoing'];
+        $event['status'] = $request->status;
         $event->save();
 
         $response['status'] = true;
-        $response['message'] = 'Set ongoing success.';
+        $response['message'] = 'Set status success.';
         $response['data'] = $event;
 
         return response()->json($response);

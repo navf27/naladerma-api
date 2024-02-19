@@ -5,6 +5,7 @@ use App\Http\Controllers\ArtworkController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +27,8 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/login', 'login');
     Route::get('/logout', 'logout')->middleware(['auth:sanctum']);
     Route::post('/register', 'register');
+    Route::get('/emailForgotPassword', 'emailForgotPassword');
+    Route::patch('/resetPassword/{token}', 'resetPassword');
     Route::get('/me', 'me')->middleware(['auth:sanctum']);
 });
 
@@ -49,7 +52,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::post('/adm/event', 'store');
         Route::get('/adm/event/{id}', 'show');
         Route::patch('/adm/event/{id}', 'update');
-        Route::patch('/adm/event/set/{id}', 'setOnGoing');
+        Route::patch('/adm/event/set/{id}', 'setStatus');
         Route::delete('/adm/event/{id}', 'destroy');
     });
     Route::controller(ArtworkController::class)->group(function () {
@@ -58,5 +61,11 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::patch('/adm/artwork/{id}', 'update');
         Route::patch('/adm/artwork/set/{id}', 'setOnGallery');
         Route::delete('/adm/artwork/{id}', 'destroy');
+    });
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::controller(UserController::class)->group(function () {
+        Route::patch('/usr/update/{id}', 'update');
     });
 });

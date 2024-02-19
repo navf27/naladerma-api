@@ -16,11 +16,11 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id');
             $table->string('name', 255);
             $table->text('description');
-            $table->boolean('ongoing')->default(false);
+            $table->enum('status', ['ongoing', 'upcoming', 'finished'])->nullable();
             $table->string('location', 255);
             $table->integer('price')->nullable();
-            $table->string('file_link', 255)->nullable();
-            $table->string('img_link', 255);
+            $table->text('file_link')->nullable();
+            $table->text('img_link');
             $table->dateTime('start_time');
             $table->dateTime('time_ends');
             $table->timestamps();
