@@ -30,6 +30,7 @@ class AuthController extends Controller
         }
 
         $response['status'] = true;
+        $response['message'] = 'Login success.';
         $response['token'] = $user->createToken('user_login')->plainTextToken;
 
         return response()->json([$response]);

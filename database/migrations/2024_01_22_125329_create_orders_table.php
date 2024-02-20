@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('event_id');
             $table->integer('quantity');
             $table->integer('total');
+            $table->enum('status', ['pending', 'paid']);
             $table->dateTime('date')->default(Carbon::now());
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');

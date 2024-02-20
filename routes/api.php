@@ -5,6 +5,7 @@ use App\Http\Controllers\ArtworkController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -68,4 +69,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(UserController::class)->group(function () {
         Route::patch('/usr/update/{id}', 'update');
     });
+    Route::controller(OrderController::class)->group(function () {
+        Route::post('/checkout-user/{event_id}', 'checkoutUser');
+    });
 });
+
+Route::post('/checkout-customer/{event_id}', [OrderController::class, 'checkoutCustomer']);
+Route::patch('/setPaymentStatus/{order_id}', [OrderController::class, 'setPaymentStatus']);
