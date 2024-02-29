@@ -86,7 +86,11 @@ class AuthController extends Controller
             $message->subject("Naladerma Reset Password");
         });
 
-        return response()->json($token);
+        return response()->json([
+            'status' => true,
+            'message' => 'Request token success.',
+            'data' => $token,
+        ]);
     }
 
     public function resetPassword(Request $request)

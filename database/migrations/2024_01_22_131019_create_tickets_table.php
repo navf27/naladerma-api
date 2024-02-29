@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
+            $table->string('ticket_id')->unique();
             $table->unsignedBigInteger('order_id');
             $table->string('ticket_link', 255);
             $table->boolean('ticket_used')->default(false);

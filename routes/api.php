@@ -75,4 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::post('/checkout-customer/{event_id}', [OrderController::class, 'checkoutCustomer']);
-Route::patch('/setPaymentStatus/{order_id}', [OrderController::class, 'setPaymentStatus']);
+Route::post('/finalTransaction/{order_id}', [OrderController::class, 'finalTransaction']);
+Route::post('/callback', [OrderController::class, 'midtransCallback']);
+
+Route::get('/testing', [OrderController::class, 'testing']);
