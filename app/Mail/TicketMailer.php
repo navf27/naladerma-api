@@ -13,13 +13,14 @@ use Illuminate\Support\Facades\Storage;
 class TicketMailer extends Mailable
 {
     use Queueable, SerializesModels;
+    public $orderData;
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($orderData)
     {
-        //
+        $this->orderData = $orderData;
     }
 
     /**
@@ -28,7 +29,7 @@ class TicketMailer extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Ticket Mailer',
+            subject: 'Ini E-Ticketmu!',
         );
     }
 

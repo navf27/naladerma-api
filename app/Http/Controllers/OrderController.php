@@ -7,11 +7,12 @@ use App\Models\Customer;
 use App\Models\Event;
 use App\Models\Order;
 use App\Models\Ticket;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class OrderController extends Controller
 {
@@ -50,7 +51,6 @@ class OrderController extends Controller
                 'event_id' => $event_id,
                 'quantity' => $request->quantity,
                 'total' => $eventData->price * $request->quantity,
-                'status' => 'pending',
                 'date' => Carbon::now(),
             ];
 
@@ -64,7 +64,6 @@ class OrderController extends Controller
                 'event_id' => $event_id,
                 'quantity' => $request->quantity,
                 'total' => $eventData->price * $request->quantity,
-                'status' => 'pending',
                 'date' => Carbon::now(),
             ];
 
@@ -197,7 +196,7 @@ class OrderController extends Controller
                 $orderData = Order::where('id', $request->order_id)->with(['user', 'customer', 'event'])->first();
                 $orderData->update(['status' => 'paid']);
 
-                for ($i = 0; $i < $orderData->quantity; $i++) {
+                for ($i = 1; $i <= $orderData->quantity; $i++) {
                     $id = $orderData->id . Carbon::now()->micro . mt_rand(100, 999);
 
                     $ticket = new Ticket();
@@ -208,40 +207,62 @@ class OrderController extends Controller
                     ]);
                     $ticket->save();
 
-                    $pdf = Pdf::loadView('emails.ticketEmail', compact('ticket', 'orderData'));
-                    if ($orderData->user) {
-                        $pdfContent = $pdf->output();
-                        Storage::put('/tickets' . '/' . $ticket->ticket_id . '-' . $orderData->user->name . '.pdf', $pdfContent);
+                    $qrcode = QrCode::size(150)->generate($ticket->ticket_link);
+                    $clear = str_replace('<?xml version="1.0" encoding="UTF-8"?>', '', $qrcode);
+                    $mpdf = new \Mpdf\Mpdf();
+                    $mpdf->WriteHTML(view('emails.ticketEmail', compact('ticket', 'orderData', 'clear')));
+
+                    if ($orderData->user && !$orderData->customer) {
+                        $mpdf->Output(storage_path('app/tickets/') . $i . '-' . $ticket->ticket_id . '-' . $orderData->user->name . '.pdf', 'F');
+                    } elseif ($orderData->user && $orderData->customer) {
+                        $mpdf->Output(storage_path('app/tickets/') . $i . '-' . $ticket->ticket_id . '-' . $orderData->customer->name . '.pdf', 'F');
                     } elseif ($orderData->customer && !$orderData->user) {
-                        $pdfContent = $pdf->output();
-                        Storage::put('/tickets' . '/' . $ticket->ticket_id . '-' . $orderData->customer->name . '.pdf', $pdfContent);
+                        $mpdf->Output(storage_path('app/tickets/') . $i . '-' . $ticket->ticket_id . '-' . $orderData->customer->name . '.pdf', 'F');
                     }
                 }
 
                 if ($orderData->user) {
-                    Mail::to($orderData->user->email)->send(new TicketMailer);
+                    Mail::to($orderData->user->email)->send(new TicketMailer($orderData));
                 } elseif ($orderData->customer && !$orderData->user) {
-                    Mail::to($orderData->customer->email)->send(new TicketMailer);
+                    Mail::to($orderData->customer->email)->send(new TicketMailer($orderData));
                 }
 
-                Storage::deleteDirectory('/tickets');
+                $files = Storage::files('/tickets');
+
+                foreach ($files as $file) {
+                    Storage::delete($file);
+                }
             }
         }
     }
 
     public function testing()
     {
+        $qrcode = QrCode::size(150)->generate('A basic of Qcode!');
+        $clear = str_replace('<?xml version="1.0" encoding="UTF-8"?>', '', $qrcode);
+
+        // require_once __DIR__ . '/vendor/autoload.php';
+        $mpdf = new \Mpdf\Mpdf();
+        $mpdf->WriteHTML(view('emails.ticketEmail', ['qr' => $clear]));
+        $mpdf->Output(storage_path('app/tickets/') . 'ticket-test.pdf', 'F');
+
+        // return $qr;
 
         // $pdf = Pdf::loadView('emails.ticketEmail');
-        // $pdfContent = $pdf->output();
+        // return $pdf->stream();
+
+        // return Pdf::loadFile(public_path() . '/ticket.html')->stream('download.pdf');
+        // return Pdf::loadFile(storage_path('app/'))->stream('ticket.pdf');
+
         // Storage::put('/tickets/ticket.pdf', $pdfContent);
 
         // return response()->json(['message' => 'Send email success.']);
 
-        // $order = Order::where('id', 5)->with(['user', 'customer'])->first();
+        // Mail::to('muhnaufalaji@gmail.com')->send(new TicketMailer);
+        // return view('emails.ticketEmail', ['qr' => $qr]);
 
-        // dd($order->user);
-
-        Mail::to('muhnaufalaji@gmail.com')->send(new TicketMailer);
+        // return QrCode::generate(
+        //     'Hello, World!',
+        // );
     }
 }

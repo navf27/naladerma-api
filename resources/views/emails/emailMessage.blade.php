@@ -9,7 +9,22 @@
 </head>
 
 <body>
-    <h1>Ini tiketmu!</h1>
+    @if ($orderData->user && !$orderData->customer)
+        <div style="font-size: 20px; margin-bottom: 20px">Halo, <b>{{ $orderData->user->name }}!</b></div>
+        <p>Pesanan tiket {{ $orderData->event->name }} Anda telah dikonfirmasi.</p>
+        <p>Terimakasih telah menjadi bagian dari Sanggar Seni Naladerma dan berkontribusi dalam pelestarian kesenian
+            Indonesia!</p>
+    @elseif ($orderData->user && $orderData->customer)
+        <div style="font-size: 20px; margin-bottom: 20px">Halo, <b>{{ $orderData->customer->name }}!</b></div>
+        <p>Pesanan tiket {{ $orderData->event->name }} Anda telah dikonfirmasi.</p>
+        <p>Terimakasih telah menjadi bagian dari Sanggar Seni Naladerma dan berkontribusi dalam pelestarian kesenian
+            Indonesia!</p>
+    @elseif ($orderData->customer && !$orderData->user)
+        <div style="font-size: 20px; margin-bottom: 20px">Halo, <b>{{ $orderData->customer->name }}!</b></div>
+        <p>Pesanan tiket {{ $orderData->event->name }} Anda telah dikonfirmasi.</p>
+        <p>Terimakasih telah menjadi bagian dari Sanggar Seni Naladerma dan berkontribusi dalam pelestarian kesenian
+            Indonesia!</p>
+    @endif
 </body>
 
 </html>
