@@ -29,11 +29,16 @@ class AuthController extends Controller
             ]);
         }
 
-        $response['status'] = true;
-        $response['message'] = 'Login success.';
-        $response['token'] = $user->createToken('user_login')->plainTextToken;
+        $token = $user->createToken('user_login')->plainTextToken;
 
-        return response()->json([$response]);
+        return response()->json([
+            "status" => true,
+            "message" => 'Login success.',
+            "data" => [
+                "token" => $token,
+                "role" => $user->role,
+            ],
+        ]);
     }
 
     public function logout(Request $request)
@@ -52,7 +57,6 @@ class AuthController extends Controller
             'name' => 'required|max:255',
             'email' => 'required|unique:users|email|max:255',
             'phone' => 'required|max:20',
-            'address' => 'required|max:255',
             'password' => 'required|min:6|max:255',
         ]);
 

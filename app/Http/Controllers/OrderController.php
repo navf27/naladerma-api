@@ -238,13 +238,14 @@ class OrderController extends Controller
 
     public function testing()
     {
-        $qrcode = QrCode::size(150)->generate('A basic of Qcode!');
-        $clear = str_replace('<?xml version="1.0" encoding="UTF-8"?>', '', $qrcode);
 
-        // require_once __DIR__ . '/vendor/autoload.php';
-        $mpdf = new \Mpdf\Mpdf();
-        $mpdf->WriteHTML(view('emails.ticketEmail', ['qr' => $clear]));
-        $mpdf->Output(storage_path('app/tickets/') . 'ticket-test.pdf', 'F');
+        return response()->json(["status" => true, "message" => "Berhasil melakukan hit api."]);
+        // $qrcode = QrCode::size(150)->generate('A basic of Qcode!');
+
+        // // require_once __DIR__ . '/vendor/autoload.php';
+        // $mpdf = new \Mpdf\Mpdf();
+        // $mpdf->WriteHTML(view('emails.ticketEmail', ['qr' => $clear]));
+        // $mpdf->Output(storage_path('app/tickets/') . 'ticket-test.pdf', 'F');
 
         // return $qr;
 
