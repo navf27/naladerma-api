@@ -36,13 +36,13 @@ Route::controller(AuthController::class)->group(function () {
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::controller(AdminController::class)->group(function () {
         Route::get('/adm', 'index');
-        Route::get('/adm/user', 'users');
-        Route::get('/adm/customer', 'customers');
-        Route::get('/adm/category', 'categories');
-        Route::get('/adm/artwork', 'artworks');
-        Route::get('/adm/event', 'events');
-        Route::get('/adm/order', 'orders');
-        Route::get('/adm/ticket', 'tickets');
+        Route::get('/adm/users', 'users');
+        Route::get('/adm/customers', 'customers');
+        Route::get('/adm/categories', 'categories');
+        Route::get('/adm/artworks', 'artworks');
+        Route::get('/adm/events', 'events');
+        Route::get('/adm/orders', 'orders');
+        Route::get('/adm/tickets', 'tickets');
     });
     Route::controller(CategoryController::class)->group(function () {
         Route::post('/adm/category', 'store');
@@ -78,4 +78,5 @@ Route::post('/checkout-customer/{event_id}', [OrderController::class, 'checkoutC
 Route::post('/finalTransaction/{order_id}', [OrderController::class, 'finalTransaction']);
 Route::post('/callback', [OrderController::class, 'midtransCallback']);
 
-Route::get('/testing', [OrderController::class, 'testing']);
+// Route::get('/testing', [AdminController::class, 'param']);
+Route::get('/testing', [AdminController::class, 'test']);

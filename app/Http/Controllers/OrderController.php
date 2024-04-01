@@ -34,13 +34,11 @@ class OrderController extends Controller
             'name' => $me->name,
             'email' => $me->email,
             'phone' => $me->phone,
-            'address' => $me->address,
         ];
         $filteredReq = [
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'address' => $request->address,
         ];
 
         $isSame = $filteredMe === $filteredReq;

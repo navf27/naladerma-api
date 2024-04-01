@@ -30,7 +30,7 @@ class EventController extends Controller
 
     public function show($id)
     {
-        $event = Event::with('categories:id,name')->findOrFail($id);
+        $event = Event::with('category:id,name')->findOrFail($id);
 
         $response['status'] = true;
         $response['data'] = $event;

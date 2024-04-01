@@ -14,31 +14,30 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $users = User::all()->count();
-        $customers = Customer::all()->count();
-        $categories = Category::all()->count();
-        $artworks = Artwork::all()->count();
-        $events = Event::all()->count();
-        $orders = Order::all()->count();
-        $tickets = Ticket::all()->count();
+        $users = User::count();
+        $customers = Customer::count();
+        $categories = Category::count();
+        $artworks = Artwork::count();
+        $events = Event::count();
+        $orders = Order::count();
+        $tickets = Ticket::count();
 
-        $response['status'] = true;
-        $response['data'] = [
-            'users' => $users,
-            'customers' => $customers,
-            'categories' => $categories,
-            'artworks' => $artworks,
-            'events' => $events,
-            'orders' => $orders,
-            'tickets' => $tickets,
-        ];
-
-        return response()->json($response);
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'users' => $users,
+                'customers' => $customers,
+                'categories' => $categories,
+                'artworks' => $artworks,
+                'events' => $events,
+                'orders' => $orders,
+                'tickets' => $tickets,
+            ]]);
     }
 
     public function users()
     {
-        $users = User::all();
+        $users = User::orderBy('name')->get();
 
         $response['status'] = true;
         $response['data'] = $users;
@@ -48,12 +47,9 @@ class AdminController extends Controller
 
     public function customers()
     {
-        $customers = Customer::all();
+        $customers = Customer::orderBy('name')->get();
 
-        $response['status'] = true;
-        $response['data'] = $customers;
-
-        return response()->json($response);
+        return response()->json(['status' => true, 'message' => 'Get customers success.', 'data' => $customers]);
     }
 
     public function categories()
@@ -78,7 +74,7 @@ class AdminController extends Controller
 
     public function events()
     {
-        $events = Event::with('categories:id,name')->get();
+        $events = Event::with('category:id,name')->orderBy('name')->get();
 
         $response['status'] = true;
         $response['data'] = $events;
@@ -88,7 +84,7 @@ class AdminController extends Controller
 
     public function orders()
     {
-        $orders = Order::all();
+        $orders = Order::with(['event:id,name', 'user:id,name', 'customer:id,name'])->get();
 
         $response['status'] = true;
         $response['data'] = $orders;
@@ -104,5 +100,20 @@ class AdminController extends Controller
         $response['data'] = $tickets;
 
         return response()->json($response);
+    }
+
+    public function param()
+    {
+        $param = request('name');
+        $customer = Customer::where('name', 'like', "%{$param}%")->get();
+
+        return response()->json(['data' => $customer]);
+    }
+
+    public function test()
+    {
+        $customers = User::all();
+
+        return response()->json(['status' => true, 'data' => $customers]);
     }
 }
