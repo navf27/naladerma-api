@@ -13,7 +13,7 @@ class Event extends Model
         'category_id',
         'name',
         'description',
-        'ongoing',
+        'status',
         'location',
         'price',
         'file_link',

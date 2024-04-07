@@ -112,8 +112,8 @@ class AdminController extends Controller
 
     public function test()
     {
-        $customers = User::all();
+        // $customers = User::all();
 
-        return response()->json(['status' => true, 'data' => $customers]);
+        return response()->json(['status' => true, 'data' => "ngetes aja"]);
     }
 }
