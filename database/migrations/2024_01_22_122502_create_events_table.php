@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('location', 255);
             $table->integer('price')->nullable();
             $table->text('file_link')->nullable();
-            $table->text('img_link');
+            $table->text('img_link')->nullable();
             $table->dateTime('start_time');
             $table->dateTime('time_ends');
             $table->timestamps();

@@ -74,7 +74,7 @@ class AdminController extends Controller
 
     public function events()
     {
-        $events = Event::with('category:id,name')->orderBy('name')->get();
+        $events = Event::with('category:id,name')->get();
 
         $response['status'] = true;
         $response['data'] = $events;

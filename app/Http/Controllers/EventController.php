@@ -14,9 +14,8 @@ class EventController extends Controller
             'name' => 'required|max:255',
             'description' => 'required',
             'location' => 'required|max:45',
-            'img_link' => 'required',
-            'start_time' => 'required',
-            'time_ends' => 'required',
+            // 'start_time' => 'required',
+            // 'time_ends' => 'required',
         ]);
 
         $event = Event::create($request->all());
