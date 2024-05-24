@@ -58,7 +58,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     });
     Route::controller(ArtworkController::class)->group(function () {
         Route::post('/adm/artwork', 'store');
-        Route::get('/adm/artwork/{id}', 'show');
+        // Route::get('/adm/artwork/{id}', 'show');
         Route::patch('/adm/artwork/{id}', 'update');
         Route::patch('/adm/artwork/set/{id}', 'setOnGallery');
         Route::delete('/adm/artwork/{id}', 'destroy');
@@ -74,9 +74,13 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+// public endpoints
 Route::post('/checkout-customer/{event_id}', [OrderController::class, 'checkoutCustomer']);
 Route::post('/finalTransaction/{order_id}', [OrderController::class, 'finalTransaction']);
 Route::post('/callback', [OrderController::class, 'midtransCallback']);
+
+Route::get('/all-events', [EventController::class, 'index']);
+Route::get('/adm/event/{id}', [EventController::class, 'show']);
 
 // Route::get('/testing', [AdminController::class, 'param']);
 Route::get('/testing', [AdminController::class, 'test']);

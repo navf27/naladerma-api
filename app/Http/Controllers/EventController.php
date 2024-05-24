@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
+    public function index()
+    {
+        $events = Event::orderBy('id', 'desc')->get();
+
+        return response()->json($events);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
