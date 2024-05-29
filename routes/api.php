@@ -71,6 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::controller(OrderController::class)->group(function () {
         Route::post('/checkout-user/{event_id}', 'checkoutUser');
+        Route::delete('/del-transaction/{id}', 'destroy');
     });
 });
 
@@ -82,5 +83,7 @@ Route::post('/callback', [OrderController::class, 'midtransCallback']);
 Route::get('/all-events', [EventController::class, 'index']);
 Route::get('/adm/event/{id}', [EventController::class, 'show']);
 
+Route::get('/user-pdg-payments', [OrderController::class, 'getPendingUsersOrder'])->middleware(['auth:sanctum']);
+
 // Route::get('/testing', [AdminController::class, 'param']);
-Route::get('/testing', [AdminController::class, 'test']);
+// Route::get('/testing', [AdminController::class, 'test']);

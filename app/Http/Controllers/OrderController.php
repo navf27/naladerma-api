@@ -78,9 +78,21 @@ class OrderController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
             ),
+            'item_details' => array(
+                array(
+                    'id' => $eventData->id,
+                    'price' => $eventData->price,
+                    'quantity' => $request->quantity,
+                    'name' => $eventData->name,
+                ),
+            ),
         );
 
         $snapToken = \Midtrans\Snap::getSnapToken($params);
+
+        $thisOrder = Order::findOrFail($orderData->id);
+        $thisOrder->snap_token = $snapToken;
+        $thisOrder->save();
 
         return response()->json([
             'status' => true,
@@ -109,7 +121,6 @@ class OrderController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'address' => $request->address,
         ];
 
         $customerData = Customer::create($filteredReq);
@@ -133,6 +144,14 @@ class OrderController extends Controller
                 'first_name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
+            ),
+            'item_details' => array(
+                array(
+                    'id' => $eventData->id,
+                    'price' => $eventData->price,
+                    'quantity' => $request->quantity,
+                    'name' => $eventData->name,
+                ),
             ),
         );
 
@@ -219,8 +238,11 @@ class OrderController extends Controller
                     }
                 }
 
-                if ($orderData->user) {
+                if ($orderData->user && !$orderData->customer) {
                     Mail::to($orderData->user->email)->send(new TicketMailer($orderData));
+                } elseif ($orderData->user && $orderData->customer) {
+                    Mail::to($orderData->user->email)->send(new TicketMailer($orderData));
+                    Mail::to($orderData->customer->email)->send(new TicketMailer($orderData));
                 } elseif ($orderData->customer && !$orderData->user) {
                     Mail::to($orderData->customer->email)->send(new TicketMailer($orderData));
                 }
@@ -234,10 +256,44 @@ class OrderController extends Controller
         }
     }
 
+    public function getPendingUsersOrder()
+    {
+        $me = auth()->user();
+
+        $orders = Order::where(['user_id' => $me->id, 'status' => 'pending'])->with('event:id,name,img_link')->orderBy('id', 'desc')->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $orders,
+            'message' => "Get users order data success.",
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $event = Order::findOrFail($id);
+        $event->delete();
+
+        $response['status'] = true;
+        $response['message'] = 'Delete transaction success.';
+        $response['data'] = $event;
+
+        return response()->json($response);
+    }
+
     public function testing()
     {
+        // $me = auth()->user();
 
-        return response()->json(["status" => true, "message" => "Berhasil melakukan hit api."]);
+        // $orders = Order::where('user_id', $me->id)->get();
+
+        // return response()->json([
+        //     'status' => true,
+        //     'data' => $orders,
+        //     'message' => "Get user order data success.",
+        // ]);
+
+        // return response()->json(["status" => true, "message" => "Berhasil melakukan hit api."]);
         // $qrcode = QrCode::size(150)->generate('A basic of Qcode!');
 
         // // require_once __DIR__ . '/vendor/autoload.php';
