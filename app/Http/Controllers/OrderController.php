@@ -260,7 +260,7 @@ class OrderController extends Controller
     {
         $me = auth()->user();
 
-        $orders = Order::where(['user_id' => $me->id, 'status' => 'pending'])->with('event:id,name,img_link')->orderBy('id', 'desc')->get();
+        $orders = Order::where(['user_id' => $me->id, 'status' => 'pending'])->with('event:id,name,img_link')->get();
 
         return response()->json([
             'status' => true,
