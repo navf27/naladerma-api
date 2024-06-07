@@ -72,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(OrderController::class)->group(function () {
         Route::post('/checkout-user/{event_id}', 'checkoutUser');
         Route::delete('/del-transaction/{id}', 'destroy');
+        Route::get('/user-orders', 'getUserOrders');
     });
 });
 

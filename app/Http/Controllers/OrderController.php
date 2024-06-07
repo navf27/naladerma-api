@@ -269,6 +269,19 @@ class OrderController extends Controller
         ]);
     }
 
+    public function getUserOrders()
+    {
+        $me = auth()->user();
+
+        $orders = Order::where(['user_id' => $me->id, 'status' => 'paid'])->with('event:id,name,img_link,start_time,location,file_link')->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $orders,
+            'message' => "Get user orders data success.",
+        ]);
+    }
+
     public function destroy($id)
     {
         $event = Order::findOrFail($id);

@@ -13,7 +13,6 @@ class UserController extends Controller
             'name' => 'max:255',
             'email' => 'unique:users|email|max:255',
             'phone' => 'max:20',
-            'address' => 'max:255',
         ]);
 
         $user = User::findOrFail($id);
