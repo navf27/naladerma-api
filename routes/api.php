@@ -63,6 +63,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::patch('/adm/artwork/set/{id}', 'setOnGallery');
         Route::delete('/adm/artwork/{id}', 'destroy');
     });
+    Route::patch('/use/{ticket_id}', [OrderController::class, 'useTicket']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {

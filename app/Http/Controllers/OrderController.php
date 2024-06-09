@@ -294,6 +294,28 @@ class OrderController extends Controller
         return response()->json($response);
     }
 
+    public function useTicket($ticket_id)
+    {
+        $ticket = Ticket::where('ticket_id', $ticket_id)->first();
+
+        if ($ticket->ticket_used == true) {
+            return response()->json([
+                'status' => false,
+                'data' => $ticket,
+                'message' => "Tiket already used.",
+            ], 406);
+        }
+
+        $ticket->ticket_used = true;
+        $ticket->save();
+
+        return response()->json([
+            'status' => true,
+            'data' => $ticket,
+            'message' => "Tiket successfully used.",
+        ]);
+    }
+
     public function testing()
     {
         // $me = auth()->user();
