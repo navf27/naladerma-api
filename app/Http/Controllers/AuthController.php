@@ -100,13 +100,13 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|max:255',
-            'password' => 'required|min:6|max:255|confirmed',
-            'password_confirmation' => 'required|min:6|max:255',
+            // 'email' => 'required|email|max:255',
+            // 'password' => 'required|min:6|max:255',
+            'token' => 'required',
+            // 'password_confirmation' => 'required|min:6|max:255',
         ]);
 
         $tokenData = DB::table('password_reset_tokens')->where([
-            'email' => $request->email,
             'token' => $request->token,
         ])->first();
 
@@ -114,14 +114,14 @@ class AuthController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Token not found.',
-            ]);
+            ], 400);
         }
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $tokenData->email)->first();
         $user->update(['password' => Hash::make($request->password)]);
 
         DB::table('password_reset_tokens')->where([
-            'email' => $request->email,
+            // 'email' => $request->email,
             'token' => $request->token,
         ])->delete();
 

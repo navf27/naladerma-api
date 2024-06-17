@@ -28,7 +28,10 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/login', 'login');
     Route::get('/logout', 'logout')->middleware(['auth:sanctum']);
     Route::post('/register', 'register');
-    Route::get('/emailForgotPassword', 'emailForgotPassword');
+    Route::post('/emailForgotPassword', 'emailForgotPassword');
+    Route::get('/reset', function () {
+        return view('emails.forgotPassword');
+    });
     Route::patch('/resetPassword/{token}', 'resetPassword');
     Route::get('/me', 'me')->middleware(['auth:sanctum']);
 });
