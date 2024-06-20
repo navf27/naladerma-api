@@ -220,11 +220,11 @@ class OrderController extends Controller
                     $ticket->fill([
                         'ticket_id' => $id,
                         'order_id' => $orderData['id'],
-                        'ticket_link' => "http://localhost:8000/" . $id,
+                        'ticket_link' => "https://sanggarnaladerma.my.id/api/use/" . $id,
                     ]);
                     $ticket->save();
 
-                    $qrcode = QrCode::size(150)->generate($ticket->ticket_link);
+                    $qrcode = QrCode::size(250)->generate($ticket->ticket_link);
                     $clear = str_replace('<?xml version="1.0" encoding="UTF-8"?>', '', $qrcode);
                     $mpdf = new \Mpdf\Mpdf();
                     $mpdf->WriteHTML(view('emails.ticketEmail', compact('ticket', 'orderData', 'clear')));

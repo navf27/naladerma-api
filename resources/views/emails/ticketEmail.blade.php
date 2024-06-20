@@ -190,7 +190,10 @@
                                         <td class="inside-table">Tanggal</td>
                                         <td class="inside-table">:</td>
                                         <td class="inside-table">
-                                            {{ date('Y-m-d', strtotime($orderData->event->start_time)) }}</td>
+                                            {{ \Carbon\Carbon::parse($orderData->event->start_time)->translatedFormat('l, d F Y') }}
+                                        </td>
+                                        {{-- <td class="inside-table">
+                                            {{ date('Y-m-d', strtotime($orderData->event->start_time)) }}</td> --}}
                                     </tr>
                                     <tr class="inside-table">
                                         <td class="inside-table">Waktu</td>
