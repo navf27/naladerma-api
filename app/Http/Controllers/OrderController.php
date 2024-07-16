@@ -137,7 +137,7 @@ class OrderController extends Controller
 
         $params = array(
             'transaction_details' => array(
-                'order_id' => $orderData->id,
+                'order_id' => $orderData->id + 30,
                 'gross_amount' => $eventData->price * $request->quantity,
             ),
             'customer_details' => array(
@@ -210,8 +210,11 @@ class OrderController extends Controller
 
         if ($hashed == $request->signature_key) {
             if ($request->transaction_status == 'settlement' || $request->transaction_status == 'captured') {
-                $orderData = Order::where('id', $request->order_id)->with(['user', 'customer', 'event'])->first();
+                $orderData = Order::where('id', $request->order_id - 30)->with(['user', 'customer', 'event'])->first();
                 $orderData->update(['status' => 'paid']);
+
+                $eventData = Event::where('id', $orderData->event->id)->first();
+                $eventData->update(['quota' => $eventData->quota - $orderData->quantity]);
 
                 for ($i = 1; $i <= $orderData->quantity; $i++) {
                     $id = $orderData->id . Carbon::now()->micro . mt_rand(100, 999);

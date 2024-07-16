@@ -16,6 +16,7 @@ class Event extends Model
         'status',
         'location',
         'price',
+        'quota',
         'file_link',
         'img_link',
         'start_time',
