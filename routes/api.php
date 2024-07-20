@@ -92,3 +92,4 @@ Route::get('/user-pdg-payments', [OrderController::class, 'getPendingUsersOrder'
 
 // Route::get('/testing', [AdminController::class, 'param']);
 // Route::get('/testing', [AdminController::class, 'test']);
+Route::get('testing', [OrderController::class, 'testing'])->middleware('auth:sanctum');

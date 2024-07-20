@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Order;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class ClearPendingOrder extends Command
@@ -25,6 +27,20 @@ class ClearPendingOrder extends Command
      */
     public function handle()
     {
-        info('test cron job');
+        $pendingOrders = Order::where('status', 'pending')->get();
+        $dataDeleted = 0;
+        $now = Carbon::now();
+
+        foreach ($pendingOrders as $order) {
+            $createdTime = Carbon::parse($order->created_at);
+            $diffInHours = $createdTime->diffInHours($now);
+
+            if ($diffInHours >= 1) {
+                $order->delete();
+                $dataDeleted = $dataDeleted + 1;
+            }
+        }
+
+        info('Pending order deleted : ', $dataDeleted);
     }
 }

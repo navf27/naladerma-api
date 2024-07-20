@@ -27,8 +27,22 @@ class OrderController extends Controller
         // Set 3DS transaction for credit card to true
         \Midtrans\Config::$is3ds = true;
 
-        $eventData = Event::findOrFail($event_id);
         $me = auth()->user();
+
+        $today = Carbon::today();
+
+        $orderCount = Order::where('user_id', $me->id)
+            ->whereDate('created_at', $today)
+            ->count();
+
+        if ($orderCount >= 2) {
+            return response()->json([
+                'status' => false,
+                'message' => 'daily order limit',
+            ], 400);
+        }
+
+        $eventData = Event::findOrFail($event_id);
 
         $filteredMe = [
             'name' => $me->name,
@@ -70,7 +84,7 @@ class OrderController extends Controller
 
         $params = array(
             'transaction_details' => array(
-                'order_id' => $orderData->id,
+                'order_id' => $orderData->id + 30,
                 'gross_amount' => $eventData->price * $request->quantity,
             ),
             'customer_details' => array(
@@ -114,6 +128,19 @@ class OrderController extends Controller
         \Midtrans\Config::$isSanitized = true;
         // Set 3DS transaction for credit card to true
         \Midtrans\Config::$is3ds = true;
+
+        $today = Carbon::today();
+
+        $orderCount = Customer::where('email', $request->email)
+            ->whereDate('created_at', $today)
+            ->count();
+
+        if ($orderCount >= 2) {
+            return response()->json([
+                'status' => false,
+                'message' => 'daily order limit',
+            ], 400);
+        }
 
         $eventData = Event::findOrFail($event_id);
 
@@ -321,41 +348,40 @@ class OrderController extends Controller
 
     public function testing()
     {
-        // $me = auth()->user();
+        // TESTING CRON JOB //
+        // $now = Carbon::now();
+        // $pendingOrders = Order::where('status', 'pending')->get();
+        // $pendingOrders = Order::where('status', 'pending')->get()->count();
+        // $dataDeleted = 0;
 
-        // $orders = Order::where('user_id', $me->id)->get();
+        // foreach ($pendingOrders as $order) {
+        //     $createdTime = Carbon::parse($order->created_at);
+        //     // $diffInHours = $createdTime->diffInHours($now);
+        //     $diffInDays = $createdTime->diffInDays($now);
 
-        // return response()->json([
-        //     'status' => true,
-        //     'data' => $orders,
-        //     'message' => "Get user order data success.",
-        // ]);
+        //     if ($diffInDays > 62) {
+        //         $order->delete();
+        //         $dataDeleted = $dataDeleted + 1;
+        //     }
+        // }
 
-        // return response()->json(["status" => true, "message" => "Berhasil melakukan hit api."]);
-        // $qrcode = QrCode::size(150)->generate('A basic of Qcode!');
+        // return response()->json(['message' => 'testing successfull', 'data' => $pendingOrders]);
 
-        // // require_once __DIR__ . '/vendor/autoload.php';
-        // $mpdf = new \Mpdf\Mpdf();
-        // $mpdf->WriteHTML(view('emails.ticketEmail', ['qr' => $clear]));
-        // $mpdf->Output(storage_path('app/tickets/') . 'ticket-test.pdf', 'F');
+        // TESTING ORDER LIMIT //
+        $me = auth()->user();
+        $today = Carbon::today();
 
-        // return $qr;
+        $orderCount = Order::where('user_id', $me->id)
+            ->whereDate('created_at', $today)
+            ->count();
 
-        // $pdf = Pdf::loadView('emails.ticketEmail');
-        // return $pdf->stream();
+        if ($orderCount >= 2) {
+            return response()->json([
+                'status' => false,
+                'message' => 'daily order limit',
+            ], 400);
+        }
 
-        // return Pdf::loadFile(public_path() . '/ticket.html')->stream('download.pdf');
-        // return Pdf::loadFile(storage_path('app/'))->stream('ticket.pdf');
-
-        // Storage::put('/tickets/ticket.pdf', $pdfContent);
-
-        // return response()->json(['message' => 'Send email success.']);
-
-        // Mail::to('muhnaufalaji@gmail.com')->send(new TicketMailer);
-        // return view('emails.ticketEmail', ['qr' => $qr]);
-
-        // return QrCode::generate(
-        //     'Hello, World!',
-        // );
+        return response()->json(['order_count' => $orderCount]);
     }
 }
