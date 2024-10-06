@@ -11,7 +11,11 @@ class EventController extends Controller
     {
         $events = Event::orderBy('id', 'desc')->get();
 
-        return response()->json($events);
+        return response()->json([
+            'status' => true,
+            'message' => 'get events data success',
+            'data' => $events,
+        ]);
     }
 
     public function store(Request $request)
